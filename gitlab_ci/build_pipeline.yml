@@ -1,0 +1,46 @@
+stages:
+  - prepare
+  - build
+  - test
+
+
+install_deps:
+  stage: prepare
+  script:
+    - apt-get update
+    - apt-get install -y g++ make cmake ninja-build doxygen doxygen-gui doxygen-latex graphviz gcov lcov
+  cache:
+    key: apt-cache
+    paths:
+      - /var/cache/apt/archives/
+
+
+build_project:
+  stage: build
+  script:
+    - echo "Using the build pipeline"
+    - cmake -S . -B build
+    - cmake --build build
+  artifacts:
+    paths:
+      - build/ 
+    expire_in: 1 day 
+  dependencies:
+    - install_deps 
+  rules:
+    - if: $CI_COMMIT_BRANCH  
+
+
+load_rom:
+  stage: test
+  script:
+    - echo "just testing ..."
+    - make run ...
+    - sleep 5
+    - app_pid=$(ps aux | awk '/.../ {print $2; exit}')
+    - kill $app_pid
+  artifacts:
+    expire_in: 1 day
+  dependencies:
+    - build_project
+

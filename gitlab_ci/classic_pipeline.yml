@@ -1,0 +1,72 @@
+stages:
+  - prepare
+  - build
+  - test
+  - deploy
+
+
+install_deps:
+  stage: prepare
+  script:
+    - apt-get update
+    - apt-get install -y g++ make cmake ninja-build doxygen doxygen-gui doxygen-latex graphviz gcov lcov gcovr
+  cache:
+    key: apt-cache
+    paths:
+      - /var/cache/apt/archives/
+
+
+build_project:
+  stage: build
+  script:
+    - make all
+  artifacts:
+    paths:
+      - build/ 
+    expire_in: 1 day 
+  dependencies:
+    - install_deps 
+  rules:
+    - if: $CI_COMMIT_BRANCH  
+
+test_all:
+  stage: test
+  script:
+    - make tests
+  dependencies:
+    - build_project
+  artifacts:
+    paths:
+      - log/ 
+  allow_failure: false 
+
+
+load_rom:
+  stage: test
+  script:
+    - make run
+    - sleep 5
+    - app_pid=$(ps aux | awk '/.../ {print $2; exit}')
+    - kill $app_pid
+  artifacts:
+    expire_in: 1 day
+  dependencies:
+    - test_all
+  
+deploy:
+  stage: deploy
+  script:
+    - echo "Deploying emulator..."
+    - chmod +x build/bin/project
+    - mkdir -p ~/my_project/ 
+    - cp build/bin/my_project ~/my_project/ 
+    - echo "Project successfully deployed to ~/my_project/"
+  dependencies:
+    - load_rom
+  artifacts:
+    paths:
+      - ~/my_project/
+    expire_in: 7 days
+  rules:
+    - if: $CI_COMMIT_BRANCH == "main"
+
