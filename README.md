@@ -1,6 +1,6 @@
 # Project
 
-This repository contains ...
+This repository is a try of game engine concepts based on all the video I watch and the youtube channel of [Hirsch Daniel](https://www.youtube.com/@HirschDaniel/featured).
 
 ## Table of Contents
 - [Project](#project)

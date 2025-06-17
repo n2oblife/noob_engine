@@ -55,6 +55,34 @@ include(FetchContent)
 include(ExternalProject)
 find_package(Threads REQUIRED)
 
+find_package(PkgConfig)
+if(PKG_CONFIG_FOUND)
+    pkg_check_modules(SDL2 sdl2)
+endif()
+# Variable to hold our SDL2 libraries info
+if(SDL2_FOUND)
+    message(STATUS "Found SDL2 via pkg-config")
+    # No need to set SDL2_TARGET as we'll use variables provided by pkg-config
+else()
+    message(STATUS "System SDL2 not found. Fetch from source...")
+    
+    # If SDL2 is not found, download and fetch it
+    FetchContent_Declare(
+        SDL2
+        GIT_REPOSITORY https://github.com/libsdl-org/SDL.git
+        GIT_TAG release-2.0.20
+        CMAKE_ARGS 
+            -DSDL_SHARED=OFF 
+            -DSDL_TEST=OFF 
+            -DSDL_STATIC=ON
+    )
+    FetchContent_MakeAvailable(SDL2)
+    # Set SDL2 include and lib vars manually
+    set(SDL2_INCLUDE_DIRS "${SDL2_SOURCE_DIR}/include" "${SDL2_BINARY_DIR}/include")
+    set(SDL2_LIBRARIES SDL2-static)
+    message(STATUS "SDL2 Libraries fetched: ${SDL2_LIBRARIES}")
+endif()
+
 # TODO adapt this for a specific library
 find_package(PkgConfig)
 if(PKG_CONFIG_FOUND)
