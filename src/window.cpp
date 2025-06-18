@@ -14,4 +14,5 @@ int main()
     SDL_Surface *surface = SDL_GetWindowSurface(window);
     print_random_data(surface);
     SDL_Delay(500);
+    
 }

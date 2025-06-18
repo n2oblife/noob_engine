@@ -3,10 +3,10 @@ message(STATUS "======= COMPILATION PIPELINE CHECKS ======")
 cmake_minimum_required(VERSION 3.14)
 
 project(App
-    VERSION 1.0.0
-    DESCRIPTION "This repository ..."
+    VERSION 0.0.1
+    DESCRIPTION "This repository is a trail of a game engine"
     LANGUAGES CXX
-    HOMEPAGE_URL ...
+    HOMEPAGE_URL https://github.com/n2oblife/noob_engine
     )
 
 set(CMAKE_CXX_STANDARD 20)
@@ -84,28 +84,28 @@ else()
 endif()
 
 # TODO adapt this for a specific library
-find_package(PkgConfig)
-if(PKG_CONFIG_FOUND)
-    pkg_check_modules(LIB lib)
-endif()
-if(LIB_FOUND)
-    message(STATUS "Found LIB via pkg-config")
-    # No need to set LIB_TARGET as we'll use variables provided by pkg-config
-else()
-    message(STATUS "System LIB not found. Fetch from source...")
+# find_package(PkgConfig)
+# if(PKG_CONFIG_FOUND)
+#     pkg_check_modules(LIB lib)
+# endif()
+# if(LIB_FOUND)
+#     message(STATUS "Found LIB via pkg-config")
+#     # No need to set LIB_TARGET as we'll use variables provided by pkg-config
+# else()
+#     message(STATUS "System LIB not found. Fetch from source...")
     
-    # If LIB is not found, download and fetch it
-    FetchContent_Declare(
-        LIB
-        GIT_REPOSITORY ...
-        GIT_TAG release-...
-    )
-    FetchContent_MakeAvailable(LIB)
-    # Set LIB include and lib vars manually
-    set(LIB_INCLUDE_DIRS "${LIB_SOURCE_DIR}/include" "${LIB_BINARY_DIR}/include")
-    set(LIB_LIBRARIES LIB-static)
-    message(STATUS "LIB Libraries fetched: ${LIB_LIBRARIES}")
-endif()
+#     # If LIB is not found, download and fetch it
+#     FetchContent_Declare(
+#         LIB
+#         GIT_REPOSITORY ...
+#         GIT_TAG release-...
+#     )
+#     FetchContent_MakeAvailable(LIB)
+#     # Set LIB include and lib vars manually
+#     set(LIB_INCLUDE_DIRS "${LIB_SOURCE_DIR}/include" "${LIB_BINARY_DIR}/include")
+#     set(LIB_LIBRARIES LIB-static)
+#     message(STATUS "LIB Libraries fetched: ${LIB_LIBRARIES}")
+# endif()
 
 
 find_package(Doxygen QUIET)

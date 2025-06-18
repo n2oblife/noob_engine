@@ -12,6 +12,7 @@ OBJ_DIR := $(BUILD_DIR)/obj
 LIB_DIR := $(BUILD_DIR)/lib
 BIN_DIR := $(BUILD_DIR)/bin
 TEST_BUILD_DIR := $(BUILD_DIR)/tests
+DEBUG_BUILD_DIR := $(BUILD_DIR)/debug
 DOCS_DIR := $(BUILD_DIR)/docs
 DOCS_PDF_DIR := $(PROJECT_DIR)/docs
 
@@ -53,6 +54,11 @@ build:
 	@echo "====== Building project... ======"
 	@cmake --build $(BUILD_DIR) -j$(nproc)
 	@echo "====== Build complete! ======"
+
+.PHONY: only
+only:
+	@echo "====== Building the targeted file... ======"
+	@cmake --build $(DEBUG_BUILD_DIR) --target $(basename $(notdir $(word 2, $(MAKECMDGOALS))))
 
 # Handle debug or release based on the command line arguments
 .PHONY: debug

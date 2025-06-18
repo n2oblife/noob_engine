@@ -35,28 +35,26 @@ file(GLOB_RECURSE SRC_FILES "${CMAKE_CURRENT_SOURCE_DIR}/*.cpp")
 # endforeach()
 
 message(STATUS "Linked library:")
-add_library(app_lib
+add_library(src_lib
     ${SRC_FILES}
 )
 
-target_include_directories(app_lib PUBLIC
+target_include_directories(src_lib PUBLIC
     ${CMAKE_CURRENT_PARENT_DIR}/include
     ${LIB_INCLUDE_DIR}
 )
 
-target_link_libraries(app_lib PUBLIC 
-    ...
-)
+target_link_libraries(src_lib PUBLIC)
 
 if(LIB_FOUND)
-    target_link_libraries(app_lib PUBLIC ${LIB_LIBRARIES})
+    target_link_libraries(src_lib PUBLIC ${LIB_LIBRARIES})
 else()
-    target_link_libraries(app_lib PUBLIC LIB-static)
+    target_link_libraries(src_lib PUBLIC LIB-static)
 endif()
 
 message(STATUS "Linked binary")
-add_executable(chip8
-    main.cpp
+add_executable(window
+    window.cpp
 )
 
-target_link_libraries(chip8 PRIVATE chip8_lib)
+target_link_libraries(window PRIVATE src_lib)
