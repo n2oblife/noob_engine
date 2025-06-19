@@ -21,9 +21,7 @@ endif()
 
 file(GLOB_RECURSE SRC_FILES "${CMAKE_CURRENT_SOURCE_DIR}/*.cpp")
 
-message(STATUS "Linked binary")
-add_executable(app
-    app.cpp
-)
+# message(STATUS "Creating binary")
+# add_executable(app app.cpp)
 
-target_link_libraries(app PRIVATE app_lib)
+# target_link_libraries(app PRIVATE app_lib)

@@ -58,6 +58,7 @@ build:
 .PHONY: only
 only:
 	@echo "====== Building the targeted file... ======"
+	@mkdir -p $(DEBUG_BUILD_DIR)
 	@cmake --build $(DEBUG_BUILD_DIR) --target $(basename $(notdir $(word 2, $(MAKECMDGOALS))))
 
 # Handle debug or release based on the command line arguments

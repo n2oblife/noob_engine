@@ -18,7 +18,7 @@ set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 set(TARGET ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/app)
 set(TARGET_TESTS ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/tests/app_tests)
 set(CMAKE_APP_DIR ${CMAKE_CURRENT_SOURCE_DIR}/app)
-set(CMAKE_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/src)
+set(CMAKE_SRC_DIR ${CMAKE_CURRENT_SOURCE_DIR}/src)
 set(CMAKE_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/include)
 set(CMAKE_TEST_DIR ${CMAKE_CURRENT_SOURCE_DIR}/tests)
 set(README_FILE "${CMAKE_CURRENT_SOURCE_DIR}/README.md")
@@ -133,7 +133,7 @@ endif()
 if(DOXYGEN_EXECUTABLE)
     message(STATUS "Doxygen executable: ${DOXYGEN_EXECUTABLE}")
 
-    set(DOXYGEN_INPUT_DIR "${CMAKE_INCLUDE_DIR} ${CMAKE_SOURCE_DIR}")
+    set(DOXYGEN_INPUT_DIR "${CMAKE_INCLUDE_DIR} ${CMAKE_SRC_DIR}")
     set(DOXYGEN_OUTPUT_DIR ${CMAKE_BINARY_DIR}/docs)
     set(DOXYGEN_CONFIG_FILE ${CMAKE_BINARY_DIR}/docs/Doxyfile.in)
     
@@ -147,9 +147,52 @@ if(DOXYGEN_EXECUTABLE)
     )
 endif()
 
+message(STATUS "====== CREATING BASIC LIB ======")
+
+# Create an interface library to hold common dependencies
+add_library(basic_lib INTERFACE)
+
+# Add include directories
+target_include_directories(basic_lib INTERFACE
+    ${CMAKE_INCLUDE_DIR}
+    ${SDL2_INCLUDE_DIRS}
+    # Add other common include directories here
+)
+
+# Link common libraries
+target_link_libraries(basic_lib INTERFACE
+    Threads::Threads
+    # Add other common libraries here
+)
+
+if(SDL2_FOUND)
+    target_link_libraries(basic_lib INTERFACE ${SDL2_LIBRARIES})
+else()
+    target_link_libraries(basic_lib INTERFACE SDL2-static)
+endif()
+
+# Set common compile features
+target_compile_features(basic_lib INTERFACE cxx_std_20)
+
+# Add common compile options for debug builds
+if("${CMAKE_BUILD_TYPE}" STREQUAL "Debug")
+    if (CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
+        target_compile_options(basic_lib INTERFACE -Wall -Wextra -Wpedantic -O0 -g)
+    elseif (MSVC)
+        target_compile_options(basic_lib INTERFACE /W4)
+    endif()
+endif()
+
+# Add common compile definitions if needed
+target_compile_definitions(basic_lib INTERFACE
+    # Add any common preprocessor definitions here
+    $<$<CONFIG:Debug>:DEBUG_BUILD>
+    $<$<CONFIG:Release>:RELEASE_BUILD>
+)
+
 
 message(STATUS "====== LINKING PROJECT ======")
-add_subdirectory(${CMAKE_SOURCE_DIR})
+add_subdirectory(${CMAKE_SRC_DIR})
 add_subdirectory(${CMAKE_APP_DIR})
 
 
